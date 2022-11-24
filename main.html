@@ -8,7 +8,7 @@
 	</head>
 	<body>
 		<script type="module">
-			var CONTRACT_ADDRESS = '0xa8f9BC7385b80D111F6FA8e054AA1E5A4Ac59e73'; //Timer.sol
+			var CONTRACT_ADDRESS = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'; //Timer.sol
 			var CONTRACT_DEPLOYED = true;
 
 			var CONTRACT = undefined;
@@ -18,6 +18,7 @@
 			import connect from './Connect.js';
 			import deploy from './Deploy.js';
 			import getContract from './ConnContract.js';
+			import { ethers } from './ethers-5.2.esm.min.js';
 
 			async function conn() {
 				const account = await connect();
@@ -56,9 +57,24 @@
 			const getNow = async () => {
 				while (CONTRACT === undefined);
 
-				const result = await CONTRACT.getNow();
-				console.log(result);
-				document.getElementsByClassName('getNowClass')[0].innerHTML = result;
+				const result = await CONTRACT.getListingPrice();
+				console.log(result.toString());
+				document.getElementsByClassName('getNowClass')[0].innerHTML = result.toString();
+
+				//Trying to mint
+				const txnReceipt = await CONTRACT.mintToken(
+				"this.is.address",
+				300,
+				30,
+				0,
+				{
+				value: ethers.utils.parseUnits('0.05', 'ether')
+				}
+				)
+
+				const events = await txnReceipt.wait();
+
+				console.log(events)
 			};
 			document.querySelector('#getNowButton').addEventListener('click', getNow);
 		</script>
